@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <title>地图切换 - 设置</title>
+    <meta content="地图切换" name="description"/>
+    <meta content="地图切换" name="keyword"/>
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible"/>
+    <meta content="webkit" name="renderer"/>
+    <meta content="webkit" name="force-rendering"/>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0"
+          name="viewport">
+    <meta content="#fff" name="theme-color"/>
+    <meta content="telephone=no,email=no" name="format-detection">
+    <link href="/images/favicon.ico" rel="icon">
+    <link href="/css/options.css" rel="stylesheet">
+</head>
+<body>
+<form id="form">
+    <table>
+        <tbody>
+
+        <tr>
+            <td><label for="amapKey">高德地图key</label></td>
+            <td><input id="amapKey" class="input"/></td>
+            <td><img src="/images/help.png" class="help" alt="" id="amapKeyHelp"
+                     title="可置空。填入后将以选择的地点为中心进行切换。单击跳转至申请页面。申请时须选择'Web服务'。"></td>
+        </tr>
+
+        <tr>
+            <td><label for="baiduMapKey">百度地图key</label></td>
+            <td><input id="baiduMapKey" class="input"/></td>
+            <td><img src="/images/help.png" class="help" alt="" id="baiduMapKeyHelp"
+                     title="可置空。填入后将以选择的地点为中心进行切换。单击跳转至申请页面。申请时须选择'服务端'。"></td>
+        </tr>
+
+        <tr>
+            <th colspan="2">
+                <hr/>
+            </th>
+        </tr>
+
+        <tr>
+            <td><label for="amapDefaultUrl">高德地图默认网址</label></td>
+            <td><input id="amapDefaultUrl" type="url" required class="input"/></td>
+            <td><span class="required">*</span></td>
+        </tr>
+
+        <tr>
+            <td><label for="baiduMapDefaultUrl">百度地图默认网址</label></td>
+            <td><input id="baiduMapDefaultUrl" type="url" required class="input"/></td>
+            <td><span class="required">*</span></td>
+        </tr>
+
+        <tr>
+            <td><label for="googleSatelliteDefaultUrl">Google卫星默认网址</label></td>
+            <td><input id="googleSatelliteDefaultUrl" type="url" required class="input"/></td>
+            <td><span class="required">*</span></td>
+        </tr>
+
+        <tr>
+            <td><label for="googleEarthDefaultUrl">Google地球默认网址</label></td>
+            <td><input id="googleEarthDefaultUrl" type="url" required class="input"/></td>
+            <td><span class="required">*</span></td>
+        </tr>
+
+        <tr>
+            <td><label for="googleMapDefaultUrl">Google地图默认网址</label></td>
+            <td><input id="googleMapDefaultUrl" type="url" required class="input"/></td>
+            <td><span class="required">*</span></td>
+        </tr>
+
+        <tr>
+            <td><label for="googleSatelliteHost">Google卫星Host</label></td>
+            <td><input id="googleSatelliteHost" type="url" required class="input"/></td>
+            <td><span class="required">*</span></td>
+        </tr>
+        <tr>
+            <td><label for="googleMapHost">Google地图Host</label></td>
+            <td><input id="googleMapHost" type="url" required class="input"/></td>
+            <td><span class="required">*</span></td>
+        </tr>
+
+        <tr>
+            <th colspan="2">
+                <input type="submit" value="保存" class="button">
+                <input type="reset" value="重置" class="button">
+                <input type="button" id="setDefault" value="恢复默认" class="button">
+                <input type="button" id="clear" value="清空" class="button">
+            </th>
+        </tr>
+
+        </tbody>
+    </table>
+
+</form>
+
+<script type="module" src="/js/options.js"></script>
+<!--<script type="text/javascript" src="/js/options.js"></script>-->
+
+</body>
+</html>

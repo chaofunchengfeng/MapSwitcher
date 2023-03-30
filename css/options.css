@@ -1,0 +1,86 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    vertical-align: middle;
+    border: none;
+    outline: none;
+    overflow: hidden;
+    font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+    scrollbar-width: thin;
+    scrollbar-color: #bbb #fff;
+}
+
+body {
+    background: #fafafa;
+}
+
+table {
+    margin: auto;
+    border-spacing: 8px 10px;
+}
+
+label {
+    font-size: 14px;
+}
+
+hr {
+    margin-top: 10px;
+    border: none;
+    border-top: 1px solid #999;
+    color: red;
+    overflow: visible;
+    text-align: center;
+    height: 10px;
+}
+
+hr:after {
+    background: #fafafa;
+    content: '以下几项非必要无需修改';
+    padding: 0 4px;
+    position: relative;
+    font-size: 14px;
+    top: -10px;
+}
+
+.input {
+    padding: 5px 3px;
+    font-size: 14px;
+    border: 1px solid #e0e0e0;
+    border-radius: 3px;
+    background-color: #ffffff;
+    min-width: 300px;
+}
+
+.input:focus {
+    border: 1px solid #bbb;
+}
+
+.button {
+    font-size: 16px;
+    margin: 0 10px;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    background: #e0e0e0;
+    letter-spacing: 2px;
+    text-indent: 2px;
+}
+
+.button:hover {
+    background: #ccc;
+}
+
+.required {
+    color: red;
+}
+
+.help {
+    width: 18px;
+    height: 18px;
+}
+
+/*.saveStatus {*/
+/*    font-size: 15px;*/
+/*    color: #67C23A;*/
+/*}*/

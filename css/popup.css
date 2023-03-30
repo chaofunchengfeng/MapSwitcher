@@ -1,0 +1,40 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    vertical-align: middle;
+    border: none;
+    outline: none;
+    overflow: hidden;
+    font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+    scrollbar-width: thin;
+    scrollbar-color: #bbb #fff;
+}
+
+ul {
+    list-style: none;
+    min-width: 120px;
+}
+
+li {
+    cursor: pointer;
+    padding: 5px;
+}
+
+li:hover {
+    background: #eeeeee;
+    border-radius: 2px;
+}
+
+.map {
+    margin: 5px;
+}
+
+.mapIcon {
+    width: 14px;
+    height: 14px;
+}
+
+.mapName {
+    font-size: 14px;
+}

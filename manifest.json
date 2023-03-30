@@ -1,0 +1,78 @@
+{
+  "manifest_version": 3,
+  "name": "地图切换",
+  "description": "地图切换",
+  "version": "1.0",
+  "icons": {
+    "16": "images/icon-16.png",
+    "32": "images/icon-32.png",
+    "48": "images/icon-48.png",
+    "64": "images/icon-64.png",
+    "128": "images/icon-128.png",
+    "256": "images/icon-256.png"
+  },
+  "background": {
+    "service_worker": "js/service_worker.js",
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "html/popup.html",
+    "default_icon": {
+      "16": "images/icon-16.png",
+      "32": "images/icon-32.png",
+      "48": "images/icon-48.png",
+      "64": "images/icon-64.png",
+      "128": "images/icon-128.png",
+      "256": "images/icon-256.png"
+    },
+    "default_title": "地图切换"
+  },
+  "options_ui": {
+    "page": "html/options.html",
+    "open_in_tab": true
+  },
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://*.amap.com/*",
+    "https://*.baidu.com/*"
+  ],
+  "commands": {
+    "command1ToAmap": {
+      "description": "切换至 高德地图",
+      "suggested_key": {
+        "default": "Alt+1",
+        "mac": "Command+1"
+      }
+    },
+    "command2ToBaiduMap": {
+      "description": "切换至 百度地图",
+      "suggested_key": {
+        "default": "Alt+2",
+        "mac": "Command+3"
+      }
+    },
+    "command3ToGoogleSatellite": {
+      "description": "切换至 Google卫星",
+      "suggested_key": {
+        "default": "Alt+3",
+        "mac": "Command+3"
+      }
+    },
+    "command4ToGoogleEarth": {
+      "description": "切换至 Google地球",
+      "suggested_key": {
+        "default": "Alt+4",
+        "mac": "Command+4"
+      }
+    },
+    "command5ToGoogleMap": {
+      "description": "切换至 Google地图"
+    }
+  },
+  "minimum_chrome_version": "91",
+  "homepage_url": "https://github.com/chaofunchengfeng/mapSwitch"
+}
