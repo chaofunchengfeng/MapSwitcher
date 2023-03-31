@@ -1,7 +1,8 @@
 import {defaultOptions} from '/js/defaultOptions.js';
 
 // for 地图坐标系经纬度转换
-// js file copy from https://github.com/hujiulong/gcoord
+// source code from https://github.com/hujiulong/gcoord
+// license https://github.com/hujiulong/gcoord/blob/bd6e63d79bc38ad47e868ddab3bf263bca16b4c6/LICENSE (MIT License)
 import gcoord from '/js/gcoord.esm-browser.prod.js';
 
 // not Module scripts should use importScripts
