@@ -167,6 +167,17 @@ async function getCurrentMapInfo(tab) {
     } else if ("map.baidu.com" === urlHost || "ditu.baidu.com" === urlHost) {
         // 百度地图
 
+        // 街景获取
+        if (urlObj.hash && urlObj.hash.startsWith("#panoid=")) {
+            let baiduMapPanoPoint = await getBaiduMapPanoPoint(tab, urlObj);
+            if (baiduMapPanoPoint) {
+                mapInfo.coordType = gcoord.BD09MC;
+                mapInfo.lng = baiduMapPanoPoint.lng;
+                mapInfo.lat = baiduMapPanoPoint.lat;
+                return mapInfo;
+            }
+        }
+
         // uid获取
         if (options.baiduMapKey && urlObj.searchParams.get("uid")) {
             let uid = urlObj.searchParams.get("uid");
@@ -274,12 +285,60 @@ function coordSystemLngLatConvert(mapInfo) {
  * 注入高德地图，获取经纬度
  * @returns {*|{lat}|{lng}} gcj02
  */
-function injectedFunction() {
+function injectedFunctionGetAmapCenter() {
     let center = window.themap.getBounds(1).getCenter();
     if (center.lng && center.lat) {
         return center;
     }
     return window.amap.getCenter();
+}
+
+/**
+ * 开始注入百度地图，获取经纬度
+ * @param tab
+ * @param urlObj
+ * @returns {Promise<{lng: *, lat: *}|null>}
+ */
+async function getBaiduMapPanoPoint(tab, urlObj) {
+
+    // 获取panoId
+    let panoId = null;
+    let regexp = /#panoid=([0-9A-Za-z]*?)&/g;
+    let found = urlObj.hash.match(regexp);
+    if (found && found[0]) {
+        panoId = found[0].substring(8, found[0].length - 1);
+    }
+
+    //
+    let arr = await chrome.scripting.executeScript({
+        args: [panoId], target: {tabId: tab.id}, func: injectedFunctionGetPanoPoint, world: "MAIN"
+    });
+    return arr[0].result;
+}
+
+/**
+ * 注入百度地图，获取经纬度
+ * @param panoId
+ * @returns {{lng: *, lat: *}|null}
+ */
+function injectedFunctionGetPanoPoint(panoId) {
+    if (panoId) {
+        let _instances = window.$BAIDU$._instances;
+        for (let key in _instances) {
+            let value = _instances[key];
+            if (value && value.container && value.container.id && value.container.id === "pano-flash-wrapper" && value.panorama && value.panorama.panoData && value.panorama.panoData.panoId === panoId) {
+
+                //
+                if (value.panorama.panoData.rx && value.panorama.panoData.ry) {
+                    return {lng: value.panorama.panoData.rx, lat: value.panorama.panoData.ry};
+                } else {
+                    return {lng: value.panorama.panoData.panoX, lat: value.panorama.panoData.panoY};
+                }
+
+            }
+        }
+    }
+    return null;
 }
 
 /**
@@ -289,7 +348,7 @@ function injectedFunction() {
  */
 async function getAmapCenter(tab) {
     let arr = await chrome.scripting.executeScript({
-        target: {tabId: tab.id}, func: injectedFunction, world: "MAIN"
+        target: {tabId: tab.id}, func: injectedFunctionGetAmapCenter, world: "MAIN"
     });
     return arr[0].result;
 }
