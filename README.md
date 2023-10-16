@@ -12,6 +12,12 @@ and Google Earth. It will keep the center point of the map as consistent as poss
 
 ## 更新日志
 
+### v1.2
+
+*20231016*
+
+1. Google卫星打开后自动隐藏标签
+
 ### v1.1
 
 *20230510*
