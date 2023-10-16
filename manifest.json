@@ -11,6 +11,7 @@
     "128": "images/icon-128.png",
     "256": "images/icon-256.png"
   },
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAk+rDqP8y7Dm4YTX0hjfql2mNcX18cyIzxgPDxllMP0T5YhLAuW704876ABD7uC05sU/t2QuB91QiiR4NSqbtZttfjav4QUcJ2mHcWXNuvOWZ/WZAmTIyELOdnrKFMkpf4271UiXXpEle/rRmPXwHiFsvHCraXMG8OFAc3eVrSk2j4b0qyW5A1FolWqxlogijQFeDD2uy4iH76WTyAMg+nDGUYDO5tnIkv3Roqpu57tFIUbIqO/PbDGLolH7DRYlxOo4pZ8Q/xIB/Qzu3hqviDk2Lhk+7pOUsPFV6m7/5SmOBh21OTvf1At+G5fP111ksFCu1VYJpl2MN7y9YneDbnwIDAQAB",
   "background": {
     "service_worker": "js/service_worker.js",
     "type": "module"
