@@ -113,7 +113,77 @@ async function doAction(command, tab) {
     }
 
     // open new url
-    createTab(tab, url);
+    let newTab = await createTab(tab, url);
+
+    // Google卫星隐藏标签
+    if ("command3ToGoogleSatellite" === command) {
+        googleSatelliteHideLabels(newTab.id);
+    }
+
+}
+
+/**
+ * Google卫星隐藏标签
+ */
+function googleSatelliteHideLabels(newTabId) {
+    let pollCount = 0;
+    let intervalID = setInterval(async () => {
+        try {
+            pollCount++;
+            if (pollCount > 50) {
+                clearInterval(intervalID);
+                return;
+            }
+            let newTab = await chrome.tabs.get(newTabId);
+            if ("complete" === newTab.status) {
+                clearInterval(intervalID);
+
+                // 注入
+                void chrome.scripting.executeScript({
+                    target: {tabId: newTabId}, func: injectedFunctionGoogleSatelliteHideLabels, world: "MAIN"
+                });
+            }
+        } catch (e) {
+            console.error(e)
+            clearInterval(intervalID);
+        }
+    }, 200);
+}
+
+/**
+ * 注入 - Google卫星隐藏标签
+ */
+function injectedFunctionGoogleSatelliteHideLabels() {
+
+    let pollCount = 0;
+    let intervalID = setInterval(async () => {
+        try {
+            pollCount++;
+            if (pollCount > 50) {
+                clearInterval(intervalID);
+                return;
+            }
+
+            let elementNodeListOf = document.querySelectorAll("button[jsaction='layerswitcher.intent.labels']");
+            if (!elementNodeListOf.length) {
+                return;
+            }
+            if (elementNodeListOf.length > 1) {
+                clearInterval(intervalID);
+                return;
+            }
+
+            clearInterval(intervalID);
+            // 隐藏标签
+            elementNodeListOf[0].click();
+        } catch (e) {
+            console.error(e)
+            clearInterval(intervalID);
+        }
+    }, 200);
+
+
+    // document.querySelectorAll("button[jsaction='layerswitcher.intent.labels']")[0].click();
 }
 
 /**
@@ -458,9 +528,9 @@ function getUrl2GoogleMap(mapInfo) {
  * @param tab
  * @param url
  */
-function createTab(tab, url) {
+async function createTab(tab, url) {
     console.log("open url:\t", url);
-    void chrome.tabs.create({
+    return await chrome.tabs.create({
         url: url, index: tab.index + 1
     });
 }

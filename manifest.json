@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "地图切换",
   "description": "地图切换",
-  "version": "1.1",
+  "version": "1.2",
   "icons": {
     "16": "images/icon-16.png",
     "32": "images/icon-32.png",
@@ -38,7 +38,10 @@
   ],
   "host_permissions": [
     "https://*.amap.com/*",
-    "https://*.baidu.com/*"
+    "https://*.baidu.com/*",
+    "https://*.google.com/maps",
+    "https://*.google.com.hk/maps",
+    "https://*.google.com.tw/maps"
   ],
   "commands": {
     "command1ToAmap": {
