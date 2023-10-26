@@ -80,6 +80,10 @@ hr:after {
     height: 18px;
 }
 
+.hoverCursorPointer:hover {
+    cursor: pointer;
+}
+
 /*.saveStatus {*/
 /*    font-size: 15px;*/
 /*    color: #67C23A;*/
