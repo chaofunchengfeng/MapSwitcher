@@ -12,6 +12,12 @@ and Google Earth. It will keep the center point of the map as consistent as poss
 
 ## 更新日志
 
+### v1.3
+
+*20231103*
+
+1. Google卫星、Google地图点标记
+
 ### v1.2
 
 *20231016*
