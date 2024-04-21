@@ -107,6 +107,10 @@ async function doAction(command, tab) {
             url = getUrl2GoogleMap(mapInfo);
             break;
         }
+        case "command6ToOverpassTurbo": {
+            url = "https://overpass-turbo.eu/";
+            break;
+        }
         default: {
             return;
         }
@@ -311,6 +315,12 @@ async function getCurrentMapInfo(tab) {
         mapInfo.lng = lnglatArr[1];
         mapInfo.lat = lnglatArr[0];
         return mapInfo;
+    } else if ("overpass-turbo.eu" === urlHost) {
+        let overpassTurboCenter = await getOverpassTurboCenter(tab);
+        mapInfo.coordType = gcoord.WGS84;
+        mapInfo.lng = overpassTurboCenter.lng ? overpassTurboCenter.lng : 0;
+        mapInfo.lat = overpassTurboCenter.lat ? overpassTurboCenter.lat : 0;
+        return mapInfo;
     }
 
     //
@@ -410,6 +420,29 @@ function injectedFunctionGetPanoPoint(panoId) {
     }
     return null;
 }
+
+/**
+ * 开始注入OverpassTurbo，获取经纬度
+ * @param tab
+ * @returns {{lng: string, lat: string}} wgs84
+ */
+async function getOverpassTurboCenter(tab) {
+    let arr = await chrome.scripting.executeScript({
+        target: {tabId: tab.id}, func: injectedFunctionGetOverpassTurboCenter, world: "MAIN"
+    });
+    return arr[0].result;
+}
+
+/**
+ * 注入OverpassTurbo，获取经纬度
+ * @returns {{lng: string, lat: string}} wgs84
+ */
+function injectedFunctionGetOverpassTurboCenter() {
+    let lng = window.localStorage.getItem("overpass-ide_coords_lon");
+    let lat = window.localStorage.getItem("overpass-ide_coords_lat");
+    return {lng: lng, lat: lat};
+}
+
 
 /**
  * 开始注入高德地图，获取经纬度

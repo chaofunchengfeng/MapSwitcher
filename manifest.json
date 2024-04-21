@@ -75,6 +75,9 @@
     },
     "command5ToGoogleMap": {
       "description": "切换至 Google地图"
+    },
+    "command6ToOverpassTurbo": {
+      "description": "切换至 overpass turbo"
     }
   },
   "minimum_chrome_version": "91",

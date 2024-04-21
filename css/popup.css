@@ -19,6 +19,7 @@ ul {
 li {
     cursor: pointer;
     padding: 5px;
+    white-space: nowrap;
 }
 
 li:hover {

@@ -13,6 +13,9 @@ document.getElementById('command4ToGoogleEarth').onclick = function () {
 document.getElementById('command5ToGoogleMap').onclick = function () {
     void handleClick("command5ToGoogleMap");
 }
+document.getElementById('command6ToOverpassTurbo').onclick = function () {
+    void handleClick("command6ToOverpassTurbo");
+}
 
 /**
  * 消息发送给 服务工作进程 做统一处理
