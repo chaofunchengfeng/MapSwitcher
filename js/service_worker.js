@@ -108,7 +108,7 @@ async function doAction(command, tab) {
             break;
         }
         case "command6ToOverpassTurbo": {
-            url = "https://overpass-turbo.eu/";
+            url = getUrl2OverpassTurbo(mapInfo);
             break;
         }
         default: {
@@ -555,6 +555,18 @@ function getUrl2GoogleMap(mapInfo) {
     }
     // return "https://www.google.com.hk/maps/@" + mapInfo.gcj02Lat + "," + mapInfo.gcj02Lng + ",400m"
     return options.googleMapHost + "/maps/place/" + mapInfo.gcj02Lat + ",+" + mapInfo.gcj02Lng + "/@" + mapInfo.gcj02Lat + "," + mapInfo.gcj02Lng + ",400m"
+}
+
+/**
+ * Google地图
+ * @param mapInfo
+ * @returns {string} url
+ */
+function getUrl2OverpassTurbo(mapInfo) {
+    if (!mapInfo.status) {
+        return "https://overpass-turbo.eu/";
+    }
+    return "https://overpass-turbo.eu/?lat=" + mapInfo.wgs84Lat + "&lon=" + mapInfo.wgs84Lng + "&zoom=18";
 }
 
 /**
