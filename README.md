@@ -12,6 +12,12 @@ and Google Earth. It will keep the center point of the map as consistent as poss
 
 ## 更新日志
 
+### v1.4
+
+*20240422*
+
+1. 支持Overpass Turbo
+
 ### v1.3
 
 *20231103*
