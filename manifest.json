@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "地图切换",
-  "description": "在不同地图网站之间互相切换，并尽可能保持地图的中心点一致。目前支持高德地图、百度地图、Google地图、Google地球、overpass turbo。",
-  "version": "1.4",
+  "description": "在不同地图网站之间互相切换，并尽可能保持地图的中心点一致。目前支持高德地图、百度地图、Google地图、Google地球、overpass turbo、三方引入高德、百度。",
+  "version": "1.5",
   "icons": {
     "16": "images/icon-16.png",
     "32": "images/icon-32.png",

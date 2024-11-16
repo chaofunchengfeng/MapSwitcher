@@ -321,6 +321,32 @@ async function getCurrentMapInfo(tab) {
         mapInfo.lng = overpassTurboCenter.lng ? overpassTurboCenter.lng : 0;
         mapInfo.lat = overpassTurboCenter.lat ? overpassTurboCenter.lat : 0;
         return mapInfo;
+    } else {
+
+        // 三方引入
+
+        // 高德地图
+        let amapCenter = await getAmapCenter(tab);
+        if (amapCenter && amapCenter.lng && amapCenter.lat) {
+            console.log("third party:\t高德");
+            mapInfo.coordType = gcoord.GCJ02;
+            mapInfo.lng = amapCenter.lng;
+            mapInfo.lat = amapCenter.lat;
+            return mapInfo;
+        }
+
+        // 百度地图
+        let bmapCenter = await getThirdPartyBmapCenter(tab);
+        if (bmapCenter && bmapCenter.lng && bmapCenter.lat) {
+            console.log("third party:\t百度");
+            mapInfo.coordType = gcoord.BD09;
+            mapInfo.lng = bmapCenter.lng;
+            mapInfo.lat = bmapCenter.lat;
+            return mapInfo;
+        }
+
+        console.log("third party:\tnull");
+
     }
 
     //
@@ -366,11 +392,36 @@ function coordSystemLngLatConvert(mapInfo) {
  * @returns {*|{lat}|{lng}} gcj02
  */
 function injectedFunctionGetAmapCenter() {
-    let center = window.themap.getBounds(1).getCenter();
-    if (center.lng && center.lat) {
-        return center;
+    // let center = window.themap.getBounds(1).getCenter();
+    // if (center.lng && center.lat) {
+    //     return center;
+    // }
+    // return window.amap.getCenter();
+
+    // 2024年12月22日 兼容三方引入
+    if (window.themap && window.themap.getBounds) {
+        let center = window.themap.getBounds(1).getCenter();
+        if (center.lng && center.lat) {
+            return center;
+        }
     }
-    return window.amap.getCenter();
+
+    if (window.amap && window.amap.getCenter) {
+        let center = window.amap.getCenter();
+        if (center.lng && center.lat) {
+            return center;
+        }
+    }
+
+    // 三方引入
+    if (window.map && window.map.getCenter) {
+        let center = window.map.getCenter();
+        if (center.lng && center.lat) {
+            return center;
+        }
+    }
+
+    return null;
 }
 
 /**
@@ -454,6 +505,31 @@ async function getAmapCenter(tab) {
         target: {tabId: tab.id}, func: injectedFunctionGetAmapCenter, world: "MAIN"
     });
     return arr[0].result;
+}
+
+/**
+ * 开始注入三方百度地图，获取经纬度
+ * @param tab
+ * @returns BD09 {lnt, lat}
+ */
+async function getThirdPartyBmapCenter(tab) {
+    let arr = await chrome.scripting.executeScript({
+        target: {tabId: tab.id}, func: injectedFunctionGetThirdPartyBmapCenter, world: "MAIN"
+    });
+    return arr[0].result;
+}
+
+/**
+ * 注入三方百度地图，获取经纬度
+ * @returns {*|{lat}|{lng}} BD09
+ */
+function injectedFunctionGetThirdPartyBmapCenter() {
+
+    if (window._indoorMgr && window._indoorMgr._map && window._indoorMgr._map.getCenter) {
+        return window._indoorMgr._map.getCenter();
+    }
+
+    return null;
 }
 
 /**
