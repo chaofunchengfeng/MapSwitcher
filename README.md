@@ -28,6 +28,16 @@ It will keep the center point of the map as consistent as possible.
 
 当然，目前它仅适用于中国大陆。因为开发它的初心就是为了解决不同地理坐标系之间的偏差。
 
+## 下载
+
+### Chrome Web Store
+
+[https://chromewebstore.google.com/detail/jfadcaeifemlgfkpglpdfoaafblppaij](https://chromewebstore.google.com/detail/jfadcaeifemlgfkpglpdfoaafblppaij)
+
+### Microsoft Edge Add-ons
+
+[https://microsoftedge.microsoft.com/addons/detail/dopggeomeenciodjfgfmkekphcejahec](https://microsoftedge.microsoft.com/addons/detail/dopggeomeenciodjfgfmkekphcejahec)
+
 ## 更新日志
 
 ### v1.5

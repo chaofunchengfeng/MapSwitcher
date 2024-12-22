@@ -1,0 +1,8 @@
+{
+  "extensionName": {
+    "message": "地图切换"
+  },
+  "extensionDescription": {
+    "message": "在不同地图网站之间互相切换，并尽可能保持地图的中心点一致。目前支持高德地图、百度地图、Google地图、Google地球、Overpass turbo、三方引入高德、百度。"
+  }
+}
