@@ -418,6 +418,10 @@ function injectedFunctionGetAmapCenter() {
         let center = window.map.getCenter();
         if (center.lng && center.lat) {
             return center;
+        } else if (center.x && center.y) {
+            center.lng = center.x;
+            center.lat = center.y;
+            return center;
         }
     }
 
