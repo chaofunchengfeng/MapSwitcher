@@ -40,6 +40,13 @@ It will keep the center point of the map as consistent as possible.
 
 ## 更新日志
 
+### v1.6
+
+*20250102*
+
+1. i18n
+2. 支持三方地图 一起看地图 www.17ditu.com
+
 ### v1.5
 
 *20241222*
