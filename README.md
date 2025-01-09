@@ -24,7 +24,7 @@ It will keep the center point of the map as consistent as possible.
 
 它会尽可能保持地图的中心点一致。
 
-如果 在地图上选择了POI点 且 在扩展选项中设置了 高德地图/百度地图 API key，切换后将会以选点为中心。
+如果 在地图上选择了POI点 且 在扩展选项中设置了 高德地图 ~~/百度地图~~ API key，切换后将会以选点为中心。
 
 当然，目前它仅适用于中国大陆。因为开发它的初心就是为了解决不同地理坐标系之间的偏差。
 
@@ -39,6 +39,14 @@ It will keep the center point of the map as consistent as possible.
 [https://microsoftedge.microsoft.com/addons/detail/dopggeomeenciodjfgfmkekphcejahec](https://microsoftedge.microsoft.com/addons/detail/dopggeomeenciodjfgfmkekphcejahec)
 
 ## 更新日志
+
+### v1.7
+
+*20250110*
+
+1. 优化 高德地图、百度地图 POI信息的获取方式
+    - 高德地图 仅在 无法在地图中查找到POI信息后 调用高德API
+    - 百度地图 直接从地图中获取POI信息，不再需要API key
 
 ### v1.6
 
