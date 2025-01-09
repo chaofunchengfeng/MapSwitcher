@@ -121,31 +121,53 @@ async function doAction(command, tab) {
 
     // Google卫星隐藏标签
     if ("command3ToGoogleSatellite" === command && url.indexOf("/place/") === -1) {
-        googleSatelliteHideLabels(newTab.id);
+        googleSatelliteHideLabels(newTab);
     }
 
 }
 
 /**
- * Google卫星隐藏标签
+ * 注入js
+ * @param tab
+ * @param injectedFunction
+ * @param args
+ * @returns
  */
-function googleSatelliteHideLabels(newTabId) {
+async function callInjectedFunction(tab, injectedFunction, ...args) {
+    console.log("callInjectedFunction:\t", injectedFunction.name);
+    console.log("args:\t", args);
+    // 注入
+    let injection = {
+        target: {tabId: tab.id}, func: injectedFunction, world: "MAIN"
+    };
+    if (args && args.length > 0) {
+        injection.args = args;
+    }
+    let arr = await chrome.scripting.executeScript(injection);
+    let result = arr[0].result;
+    console.log("injectedFunction result:\t", result);
+    return result;
+}
+
+/**
+ * Google卫星隐藏标签
+ * @param tab
+ */
+function googleSatelliteHideLabels(tab) {
     let pollCount = 0;
     let intervalID = setInterval(async () => {
         try {
             pollCount++;
             if (pollCount > 50) {
                 clearInterval(intervalID);
+                // 注入
+                void callInjectedFunction(tab, injectedFunctionGoogleSatelliteHideLabels);
                 return;
             }
-            let newTab = await chrome.tabs.get(newTabId);
-            if ("complete" === newTab.status) {
+            if ("complete" === tab.status) {
                 clearInterval(intervalID);
-
                 // 注入
-                void chrome.scripting.executeScript({
-                    target: {tabId: newTabId}, func: injectedFunctionGoogleSatelliteHideLabels, world: "MAIN"
-                });
+                void callInjectedFunction(tab, injectedFunctionGoogleSatelliteHideLabels);
             }
         } catch (e) {
             console.error(e)
@@ -216,7 +238,7 @@ async function getCurrentMapInfo(tab) {
 
             // 仅地图页
             if (urlPathname.startsWith("/place/")) {
-                let amapPlacePoint = await getAmapPlacePoint(tab, poiid);
+                let amapPlacePoint = await callInjectedFunction(tab, injectedFunctionGetAmapPlacePoint, poiid);
                 if (amapPlacePoint) {
                     mapInfo.coordType = gcoord.GCJ02;
                     mapInfo.lng = amapPlacePoint.lng;
@@ -260,7 +282,7 @@ async function getCurrentMapInfo(tab) {
         // }
 
         // 注入获取
-        let amapCenter = await getAmapCenter(tab);
+        let amapCenter = await callInjectedFunction(tab, injectedFunctionGetAmapCenter);
         if (!amapCenter) {
             return null;
         }
@@ -274,7 +296,17 @@ async function getCurrentMapInfo(tab) {
 
         // 街景获取
         if (urlObj.hash && urlObj.hash.startsWith("#panoid=")) {
-            let baiduMapPanoPoint = await getBaiduMapPanoPoint(tab, urlObj);
+
+            // 获取panoId
+            let panoId = null;
+            let regexp = /#panoid=([0-9A-Za-z]*?)&/g;
+            let found = urlObj.hash.match(regexp);
+            if (found && found[0]) {
+                panoId = found[0].substring(8, found[0].length - 1);
+            }
+
+            //
+            let baiduMapPanoPoint = await callInjectedFunction(tab, injectedFunctionGetPanoPoint, panoId)
             if (baiduMapPanoPoint) {
                 mapInfo.coordType = gcoord.BD09MC;
                 mapInfo.lng = baiduMapPanoPoint.lng;
@@ -285,7 +317,10 @@ async function getCurrentMapInfo(tab) {
 
         // uid获取
         if (urlObj.searchParams.get("uid")) {
-            let baiduMapUidPoint = await getBaiduMapUidPoint(tab, urlObj);
+            // 获取uid
+            let uid = urlObj.searchParams.get("uid");
+
+            let baiduMapUidPoint = await callInjectedFunction(tab, injectedFunctionGetBaiduMapUidPoint, uid);
             if (baiduMapUidPoint) {
                 mapInfo.coordType = gcoord.BD09MC;
                 mapInfo.lng = baiduMapUidPoint.lng;
@@ -357,7 +392,7 @@ async function getCurrentMapInfo(tab) {
         mapInfo.lat = lnglatArr[0];
         return mapInfo;
     } else if ("overpass-turbo.eu" === urlHost) {
-        let overpassTurboCenter = await getOverpassTurboCenter(tab);
+        let overpassTurboCenter = await callInjectedFunction(tab, injectedFunctionGetOverpassTurboCenter);
         mapInfo.coordType = gcoord.WGS84;
         mapInfo.lng = overpassTurboCenter.lng ? overpassTurboCenter.lng : 0;
         mapInfo.lat = overpassTurboCenter.lat ? overpassTurboCenter.lat : 0;
@@ -367,7 +402,7 @@ async function getCurrentMapInfo(tab) {
         // 三方引入
 
         // 高德地图
-        let amapCenter = await getAmapCenter(tab);
+        let amapCenter = await callInjectedFunction(tab, injectedFunctionGetAmapCenter);
         if (amapCenter && amapCenter.lng && amapCenter.lat) {
             console.log("third party:\t高德");
             mapInfo.coordType = gcoord.GCJ02;
@@ -377,7 +412,7 @@ async function getCurrentMapInfo(tab) {
         }
 
         // 百度地图
-        let bmapCenter = await getThirdPartyBmapCenter(tab);
+        let bmapCenter = await callInjectedFunction(tab, injectedFunctionGetThirdPartyBmapCenter);
         if (bmapCenter && bmapCenter.lng && bmapCenter.lat) {
             console.log("third party:\t百度");
             mapInfo.coordType = gcoord.BD09;
@@ -470,20 +505,6 @@ function injectedFunctionGetAmapCenter() {
 }
 
 /**
- * 开始注入高德地图，获取place经纬度
- * @param tab
- * @param poiid
- * @returns {Promise<{lng: *, lat: *}|null>}
- */
-async function getAmapPlacePoint(tab, poiid) {
-    //
-    let arr = await chrome.scripting.executeScript({
-        args: [poiid], target: {tabId: tab.id}, func: injectedFunctionGetAmapPlacePoint, world: "MAIN"
-    });
-    return arr[0].result;
-}
-
-/**
  * 注入高德地图，获取place经纬度
  * @param poiid
  * @returns {{lng: *, lat: *}|null}
@@ -511,25 +532,6 @@ function injectedFunctionGetAmapPlacePoint(poiid) {
 
     }
     return null;
-}
-
-
-/**
- * 开始注入百度地图，获取uid经纬度
- * @param tab
- * @param urlObj
- * @returns {Promise<{lng: *, lat: *}|null>}
- */
-async function getBaiduMapUidPoint(tab, urlObj) {
-
-    // 获取uid
-    let uid = urlObj.searchParams.get("uid");
-
-    //
-    let arr = await chrome.scripting.executeScript({
-        args: [uid], target: {tabId: tab.id}, func: injectedFunctionGetBaiduMapUidPoint, world: "MAIN"
-    });
-    return arr[0].result;
 }
 
 /**
@@ -564,29 +566,6 @@ function injectedFunctionGetBaiduMapUidPoint(uid) {
 }
 
 /**
- * 开始注入百度地图，获取经纬度
- * @param tab
- * @param urlObj
- * @returns {Promise<{lng: *, lat: *}|null>}
- */
-async function getBaiduMapPanoPoint(tab, urlObj) {
-
-    // 获取panoId
-    let panoId = null;
-    let regexp = /#panoid=([0-9A-Za-z]*?)&/g;
-    let found = urlObj.hash.match(regexp);
-    if (found && found[0]) {
-        panoId = found[0].substring(8, found[0].length - 1);
-    }
-
-    //
-    let arr = await chrome.scripting.executeScript({
-        args: [panoId], target: {tabId: tab.id}, func: injectedFunctionGetPanoPoint, world: "MAIN"
-    });
-    return arr[0].result;
-}
-
-/**
  * 注入百度地图，获取经纬度
  * @param panoId
  * @returns {{lng: *, lat: *}|null}
@@ -612,18 +591,6 @@ function injectedFunctionGetPanoPoint(panoId) {
 }
 
 /**
- * 开始注入OverpassTurbo，获取经纬度
- * @param tab
- * @returns {{lng: string, lat: string}} wgs84
- */
-async function getOverpassTurboCenter(tab) {
-    let arr = await chrome.scripting.executeScript({
-        target: {tabId: tab.id}, func: injectedFunctionGetOverpassTurboCenter, world: "MAIN"
-    });
-    return arr[0].result;
-}
-
-/**
  * 注入OverpassTurbo，获取经纬度
  * @returns {{lng: string, lat: string}} wgs84
  */
@@ -631,31 +598,6 @@ function injectedFunctionGetOverpassTurboCenter() {
     let lng = window.localStorage.getItem("overpass-ide_coords_lon");
     let lat = window.localStorage.getItem("overpass-ide_coords_lat");
     return {lng: lng, lat: lat};
-}
-
-
-/**
- * 开始注入高德地图，获取经纬度
- * @param tab
- * @returns gcj02 {lnt, lat}
- */
-async function getAmapCenter(tab) {
-    let arr = await chrome.scripting.executeScript({
-        target: {tabId: tab.id}, func: injectedFunctionGetAmapCenter, world: "MAIN"
-    });
-    return arr[0].result;
-}
-
-/**
- * 开始注入三方百度地图，获取经纬度
- * @param tab
- * @returns BD09 {lnt, lat}
- */
-async function getThirdPartyBmapCenter(tab) {
-    let arr = await chrome.scripting.executeScript({
-        target: {tabId: tab.id}, func: injectedFunctionGetThirdPartyBmapCenter, world: "MAIN"
-    });
-    return arr[0].result;
 }
 
 /**
@@ -819,17 +761,19 @@ async function getAmapPoiidDetail(poiid) {
 //     return await requestJsonApi(url);
 // }
 
-/**
- * 百度地图查询poi uid详情 <br>
- * old doc: https://api.map.baidu.com/lbsapi/webservice-placeapi.htm <br>
- * new doc: https://lbsyun.baidu.com/index.php?title=webapi/guide/webservice-placeapi#service-page-anchor-1-4
- * @param uid
- * @returns {Promise<*>}
- */
-async function getBaiduMapPoiUidDetail(uid) {
-    let url = "https://api.map.baidu.com/place/v2/detail?uid=" + uid + "&output=json&ret_coordtype=gcj02ll&extensions_adcode=true&scope=1&ak=" + options.baiduMapKey;
-    return await requestJsonApi(url);
-}
+
+// /**
+//  * 百度地图查询poi uid详情 <br>
+//  * old doc: https://api.map.baidu.com/lbsapi/webservice-placeapi.htm <br>
+//  * new doc: https://lbsyun.baidu.com/index.php?title=webapi/guide/webservice-placeapi#service-page-anchor-1-4
+//  * @param uid
+//  * @returns {Promise<*>}
+//  */
+// async function getBaiduMapPoiUidDetail(uid) {
+//     let url = "https://api.map.baidu.com/place/v2/detail?uid=" + uid + "&output=json&ret_coordtype=gcj02ll&extensions_adcode=true&scope=1&ak=" + options.baiduMapKey;
+//     return await requestJsonApi(url);
+// }
+
 
 /**
  * 坐标系转换 - 百度地图api <br>
