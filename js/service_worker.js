@@ -211,22 +211,53 @@ async function getCurrentMapInfo(tab) {
         // 高德地图
 
         // poiid获取
-        if (options.amapKey && (urlPathname.startsWith("/place/") || urlPathname.startsWith("/detail/"))) {
+        if (urlPathname.startsWith("/place/") || urlPathname.startsWith("/detail/")) {
             const poiid = urlPathname.substring(urlPathname.indexOf("/", 1) + 1);
-            const data = await getAmapPoiidDetail(poiid);
-            if (data && data.pois && data.pois.length) {
-                const pois = data.pois[0];
-                console.log("poiid lnglat:\t", pois.location);
-                let arr = pois.location.split(",");
 
-                mapInfo.coordType = gcoord.GCJ02;
-                mapInfo.lng = arr[0];
-                mapInfo.lat = arr[1];
-                // mapInfo.title = pois.name;
-                // mapInfo.content = pois.pname + pois.cityname + pois.adname + pois.address;
-                return mapInfo;
+            // 仅地图页
+            if (urlPathname.startsWith("/place/")) {
+                let amapPlacePoint = await getAmapPlacePoint(tab, poiid);
+                if (amapPlacePoint) {
+                    mapInfo.coordType = gcoord.GCJ02;
+                    mapInfo.lng = amapPlacePoint.lng;
+                    mapInfo.lat = amapPlacePoint.lat;
+                    return mapInfo;
+                }
+            }
+
+            if (options.amapKey) {
+                const data = await getAmapPoiidDetail(poiid);
+                if (data && data.pois && data.pois.length) {
+                    const pois = data.pois[0];
+                    console.log("poiid lnglat:\t", pois.location);
+                    let arr = pois.location.split(",");
+
+                    mapInfo.coordType = gcoord.GCJ02;
+                    mapInfo.lng = arr[0];
+                    mapInfo.lat = arr[1];
+                    // mapInfo.title = pois.name;
+                    // mapInfo.content = pois.pname + pois.cityname + pois.adname + pois.address;
+                    return mapInfo;
+                }
             }
         }
+
+        // if (options.amapKey && (urlPathname.startsWith("/place/") || urlPathname.startsWith("/detail/"))) {
+        //     const poiid = urlPathname.substring(urlPathname.indexOf("/", 1) + 1);
+        //     const data = await getAmapPoiidDetail(poiid);
+        //     if (data && data.pois && data.pois.length) {
+        //         const pois = data.pois[0];
+        //         console.log("poiid lnglat:\t", pois.location);
+        //         let arr = pois.location.split(",");
+        //
+        //         mapInfo.coordType = gcoord.GCJ02;
+        //         mapInfo.lng = arr[0];
+        //         mapInfo.lat = arr[1];
+        //         // mapInfo.title = pois.name;
+        //         // mapInfo.content = pois.pname + pois.cityname + pois.adname + pois.address;
+        //         return mapInfo;
+        //     }
+        // }
 
         // 注入获取
         let amapCenter = await getAmapCenter(tab);
@@ -437,6 +468,51 @@ function injectedFunctionGetAmapCenter() {
 
     return null;
 }
+
+/**
+ * 开始注入高德地图，获取place经纬度
+ * @param tab
+ * @param poiid
+ * @returns {Promise<{lng: *, lat: *}|null>}
+ */
+async function getAmapPlacePoint(tab, poiid) {
+    //
+    let arr = await chrome.scripting.executeScript({
+        args: [poiid], target: {tabId: tab.id}, func: injectedFunctionGetAmapPlacePoint, world: "MAIN"
+    });
+    return arr[0].result;
+}
+
+/**
+ * 注入高德地图，获取place经纬度
+ * @param poiid
+ * @returns {{lng: *, lat: *}|null}
+ */
+function injectedFunctionGetAmapPlacePoint(poiid) {
+    if (poiid) {
+
+        // 1
+        if (window.amap?.iwdata?.poiid && poiid === window.amap.iwdata.poiid //
+            && window.amap.iwdata.pos?.lng && window.amap.iwdata.pos.lat) {
+            return {lng: window.amap.iwdata.pos.lng, lat: window.amap.iwdata.pos.lat};
+        }
+
+        // 2
+        if (window.amap?.placeinfo?.base?.poiid && poiid === window.amap.placeinfo.base.poiid  //
+            && window.amap.placeinfo.base.x && window.amap.placeinfo.base.y) {
+            return {lng: window.amap.placeinfo.base.x, lat: window.amap.placeinfo.base.y};
+        }
+
+        // 3
+        if (window.amap?.hotSpotActive?.id && poiid === window.amap.hotSpotActive.id  //
+            && window.amap.hotSpotActive.lnglat?.lng && window.amap.hotSpotActive.lnglat.lat) {
+            return {lng: window.amap.hotSpotActive.lnglat.lng, lat: window.amap.hotSpotActive.lnglat.lat};
+        }
+
+    }
+    return null;
+}
+
 
 /**
  * 开始注入百度地图，获取uid经纬度
