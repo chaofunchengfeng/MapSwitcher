@@ -52,6 +52,10 @@ hr:after {
     min-width: 300px;
 }
 
+.input[readonly] {
+    background-color: #ddd; /* 背景色变灰 */
+}
+
 .input:focus {
     border: 1px solid #bbb;
 }
@@ -88,3 +92,7 @@ hr:after {
 /*    font-size: 15px;*/
 /*    color: #67C23A;*/
 /*}*/
+
+.lineThrough {
+    text-decoration: line-through;
+}

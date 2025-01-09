@@ -253,21 +253,31 @@ async function getCurrentMapInfo(tab) {
         }
 
         // uid获取
-        if (options.baiduMapKey && urlObj.searchParams.get("uid")) {
-            let uid = urlObj.searchParams.get("uid");
-            const data = await getBaiduMapPoiUidDetail(uid);
-            if (data && data.result && data.result.location) {
-                const result = data.result;
-                console.log("uid lnglat:\t", result.location);
-
-                mapInfo.coordType = gcoord.GCJ02;
-                mapInfo.lng = result.location.lng;
-                mapInfo.lat = result.location.lat;
-                // mapInfo.title = result.name;
-                // mapInfo.content = result.province + result.city + result.area + result.address;
+        if (urlObj.searchParams.get("uid")) {
+            let baiduMapUidPoint = await getBaiduMapUidPoint(tab, urlObj);
+            if (baiduMapUidPoint) {
+                mapInfo.coordType = gcoord.BD09MC;
+                mapInfo.lng = baiduMapUidPoint.lng;
+                mapInfo.lat = baiduMapUidPoint.lat;
                 return mapInfo;
             }
         }
+
+        // if (options.baiduMapKey && urlObj.searchParams.get("uid")) {
+        //     let uid = urlObj.searchParams.get("uid");
+        //     const data = await getBaiduMapPoiUidDetail(uid);
+        //     if (data && data.result && data.result.location) {
+        //         const result = data.result;
+        //         console.log("uid lnglat:\t", result.location);
+        //
+        //         mapInfo.coordType = gcoord.GCJ02;
+        //         mapInfo.lng = result.location.lng;
+        //         mapInfo.lat = result.location.lat;
+        //         // mapInfo.title = result.name;
+        //         // mapInfo.content = result.province + result.city + result.area + result.address;
+        //         return mapInfo;
+        //     }
+        // }
 
         // url获取
         let regexp = /\/@[\d.]*?,[\d.]*?,[\d.]*?z/g;
@@ -425,6 +435,55 @@ function injectedFunctionGetAmapCenter() {
         }
     }
 
+    return null;
+}
+
+/**
+ * 开始注入百度地图，获取uid经纬度
+ * @param tab
+ * @param urlObj
+ * @returns {Promise<{lng: *, lat: *}|null>}
+ */
+async function getBaiduMapUidPoint(tab, urlObj) {
+
+    // 获取uid
+    let uid = urlObj.searchParams.get("uid");
+
+    //
+    let arr = await chrome.scripting.executeScript({
+        args: [uid], target: {tabId: tab.id}, func: injectedFunctionGetBaiduMapUidPoint, world: "MAIN"
+    });
+    return arr[0].result;
+}
+
+/**
+ * 注入百度地图，获取uid经纬度
+ * @param uid
+ * @returns {{lng: *, lat: *}|null}
+ */
+function injectedFunctionGetBaiduMapUidPoint(uid) {
+    if (uid) {
+        if ("poi" !== window._appStateFromUrl.feature) {
+            return null;
+        }
+
+        let data = window.jssdkCurPoiCard || window.prePoiDetailCard;
+        if (!data || !data.jssdkBaseData) {
+            return null;
+        }
+
+        if (uid !== data.jssdkBaseData.uid) {
+            return null;
+        }
+
+        if (data.jssdkBaseData.x && data.jssdkBaseData.y) {
+            return {lng: data.jssdkBaseData.x, lat: data.jssdkBaseData.y};
+        } else if (data.jssdkBaseData.navi_x && data.jssdkBaseData.navi_y) {
+            return {lng: data.jssdkBaseData.navi_x, lat: data.jssdkBaseData.navi_y};
+        } else {
+            return null;
+        }
+    }
     return null;
 }
 
