@@ -120,7 +120,8 @@ async function doAction(command, tab) {
     let newTab = await createTab(tab, url);
 
     // Google卫星隐藏标签
-    if ("command3ToGoogleSatellite" === command && url.indexOf("/place/") === -1) {
+    // if ("command3ToGoogleSatellite" === command && url.indexOf("/place/") === -1) {
+    if ("command3ToGoogleSatellite" === command) {
         googleSatelliteHideLabels(newTab);
     }
 
@@ -682,9 +683,8 @@ function getUrl2GoogleSatellite(mapInfo) {
         return options.googleSatelliteDefaultUrl;
     }
 
-    // return "https://www.google.com.hk/maps/@" + mapInfo.wgs84Lat + "," + mapInfo.wgs84Lng + ",400m/data=!3m1!1e3"
-    // return options.googleSatelliteHost + "/maps/@" + mapInfo.wgs84Lat + "," + mapInfo.wgs84Lng + ",400m/data=!3m1!1e3"
-    return options.googleSatelliteHost + "/maps/place/" + mapInfo.wgs84Lat + ",+" + mapInfo.wgs84Lng + "/@" + mapInfo.wgs84Lat + "," + mapInfo.wgs84Lng + ",400m/data=!3m1!1e3"
+    return options.googleSatelliteHost + "/maps/@" + mapInfo.wgs84Lat + "," + mapInfo.wgs84Lng + ",100m/data=!3m1!1e3"
+    // return options.googleSatelliteHost + "/maps/place/" + mapInfo.wgs84Lat + ",+" + mapInfo.wgs84Lng + "/@" + mapInfo.wgs84Lat + "," + mapInfo.wgs84Lng + ",400m/data=!3m1!1e3"
 }
 
 /**
@@ -710,8 +710,9 @@ function getUrl2GoogleMap(mapInfo) {
         // return "https://www.google.com.hk/maps/@39.9055599,116.3913001,11z";
         return options.googleMapDefaultUrl;
     }
-    // return "https://www.google.com.hk/maps/@" + mapInfo.gcj02Lat + "," + mapInfo.gcj02Lng + ",400m"
-    return options.googleMapHost + "/maps/place/" + mapInfo.gcj02Lat + ",+" + mapInfo.gcj02Lng + "/@" + mapInfo.gcj02Lat + "," + mapInfo.gcj02Lng + ",400m"
+
+    return options.googleMapHost + "/maps/@" + mapInfo.gcj02Lat + "," + mapInfo.gcj02Lng + ",20z";
+    // return options.googleMapHost + "/maps/place/" + mapInfo.gcj02Lat + ",+" + mapInfo.gcj02Lng + "/@" + mapInfo.gcj02Lat + "," + mapInfo.gcj02Lng + ",400m";
 }
 
 /**
