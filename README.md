@@ -26,7 +26,7 @@ It will keep the center point of the map as consistent as possible.
 
 如果 在地图上选择了POI点，切换后将会以选点为中心。
 
-`  高德地图可以在扩展选项中设置 高德地图 API key，以使切换更准确。  `
+`  可以在扩展选项中设置 高德地图 API key，以使高德地图POI点切换后更准确。  `
 
 ~~当然，目前它仅适用于中国大陆。因为开发它的初心就是为了解决不同地理坐标系之间的偏差。~~
 
