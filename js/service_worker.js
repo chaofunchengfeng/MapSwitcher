@@ -298,29 +298,29 @@ async function getCurrentMapInfo(tab) {
         // 街景获取
         if (urlObj.hash && urlObj.hash.startsWith("#panoid=")) {
 
-            // 获取panoId
-            let panoId = null;
+            //
             let regexp = /#panoid=([0-9A-Za-z]*?)&/g;
             let found = urlObj.hash.match(regexp);
+
             if (found && found[0]) {
-                panoId = found[0].substring(8, found[0].length - 1);
+                let panoId = found[0].substring(8, found[0].length - 1);
+
+                //
+                let baiduMapPanoPoint = await callInjectedFunction(tab, injectedFunctionGetPanoPoint, panoId)
+                if (baiduMapPanoPoint) {
+                    mapInfo.coordType = gcoord.BD09MC;
+                    mapInfo.lng = baiduMapPanoPoint.lng;
+                    mapInfo.lat = baiduMapPanoPoint.lat;
+                    return mapInfo;
+                }
+
             }
 
-            //
-            let baiduMapPanoPoint = await callInjectedFunction(tab, injectedFunctionGetPanoPoint, panoId)
-            if (baiduMapPanoPoint) {
-                mapInfo.coordType = gcoord.BD09MC;
-                mapInfo.lng = baiduMapPanoPoint.lng;
-                mapInfo.lat = baiduMapPanoPoint.lat;
-                return mapInfo;
-            }
         }
 
-        // uid获取
-        if (urlObj.searchParams.get("uid")) {
-            // 获取uid
-            let uid = urlObj.searchParams.get("uid");
-
+        // 获取uid
+        let uid = urlObj.searchParams.get("uid");
+        if (uid) {
             let baiduMapUidPoint = await callInjectedFunction(tab, injectedFunctionGetBaiduMapUidPoint, uid);
             if (baiduMapUidPoint) {
                 mapInfo.coordType = gcoord.BD09MC;
@@ -347,7 +347,7 @@ async function getCurrentMapInfo(tab) {
         // }
 
         // url获取
-        let regexp = /\/@[\d.]*?,[\d.]*?,[\d.]*?z/g;
+        let regexp = /\/@[-\d.]*?,[-\d.]*?,[\d.]*?z/g;
         let found = urlPathname.match(regexp);
         if (!found || !found[0]) {
             return null;
@@ -370,11 +370,12 @@ async function getCurrentMapInfo(tab) {
             return null;
         }
 
-        let regexp = /\/@[\d.]*?,[\d.]*?,/g;
+        let regexp = /\/@[-\d.]*?,[-\d.]*?,/g;
         let found = urlPathname.match(regexp);
         if (!found || !found[0]) {
             return null;
         }
+
         let lngLatStr = found[0].substring(2, found[0].length - 1);
         let lngLatArr = lngLatStr.split(",");
 
