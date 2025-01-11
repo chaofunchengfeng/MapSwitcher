@@ -158,7 +158,7 @@ function googleSatelliteHideLabels(tab) {
     let intervalID = setInterval(async () => {
         try {
             pollCount++;
-            if (pollCount > 50) {
+            if (pollCount > 5) {
                 clearInterval(intervalID);
                 // 注入
                 void callInjectedFunction(tab, injectedFunctionGoogleSatelliteHideLabels);
