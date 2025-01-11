@@ -40,6 +40,12 @@ It will keep the center point of the map as consistent as possible.
 
 ## 更新日志
 
+### v1.8
+
+*20250111*
+
+1. https://overpass-turbo.eu/ 添加 Google Map 卫星图瓦片
+
 ### v1.7
 
 *20250110*

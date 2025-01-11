@@ -29,6 +29,18 @@
     },
     "default_title": "地图切换"
   },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.overpass-turbo.eu/*"
+      ],
+      "js": [
+        "js/overpass-turbo.eu.content-script.js"
+      ],
+      "run_at": "document_end",
+      "world": "MAIN"
+    }
+  ],
   "options_ui": {
     "page": "html/options.html",
     "open_in_tab": true
