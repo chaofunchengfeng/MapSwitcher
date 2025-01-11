@@ -353,11 +353,11 @@ async function getCurrentMapInfo(tab) {
             return null;
         }
         let lngLatZoomStr = found[0].substring(2, found[0].length - 1);
-        let lnglatArr = lngLatZoomStr.split(",");
+        let lngLatArr = lngLatZoomStr.split(",");
 
         mapInfo.coordType = gcoord.BD09MC;
-        mapInfo.lng = lnglatArr[0];
-        mapInfo.lat = lnglatArr[1];
+        mapInfo.lng = lngLatArr[0];
+        mapInfo.lat = lngLatArr[1];
         return mapInfo;
     } else if (urlHost.indexOf("google.com") > -1) {
         // Google地图 && Google地球
@@ -376,7 +376,7 @@ async function getCurrentMapInfo(tab) {
             return null;
         }
         let lngLatStr = found[0].substring(2, found[0].length - 1);
-        let lnglatArr = lngLatStr.split(",");
+        let lngLatArr = lngLatStr.split(",");
 
         if (isGoogleEarth) {
             // Google地球
@@ -389,8 +389,8 @@ async function getCurrentMapInfo(tab) {
             mapInfo.coordType = gcoord.GCJ02;
         }
 
-        mapInfo.lng = lnglatArr[1];
-        mapInfo.lat = lnglatArr[0];
+        mapInfo.lng = lngLatArr[1];
+        mapInfo.lat = lngLatArr[0];
         return mapInfo;
     } else if ("overpass-turbo.eu" === urlHost) {
         let overpassTurboCenter = await callInjectedFunction(tab, injectedFunctionGetOverpassTurboCenter);
