@@ -404,23 +404,34 @@ async function getCurrentMapInfo(tab) {
         // 三方引入
 
         // 高德地图
-        let amapCenter = await callInjectedFunction(tab, injectedFunctionGetAmapCenter);
-        if (amapCenter && amapCenter.lng && amapCenter.lat) {
+        let mapCenter = await callInjectedFunction(tab, injectedFunctionGetAmapCenter);
+        if (mapCenter && mapCenter.lng && mapCenter.lat) {
             console.log("third party:\t高德");
             mapInfo.coordType = gcoord.GCJ02;
-            mapInfo.lng = amapCenter.lng;
-            mapInfo.lat = amapCenter.lat;
+            mapInfo.lng = mapCenter.lng;
+            mapInfo.lat = mapCenter.lat;
             return mapInfo;
         }
 
         // 百度地图
-        let bmapCenter = await callInjectedFunction(tab, injectedFunctionGetThirdPartyBmapCenter);
-        if (bmapCenter && bmapCenter.lng && bmapCenter.lat) {
+        mapCenter = await callInjectedFunction(tab, injectedFunctionGetThirdPartyBmapCenter);
+        if (mapCenter && mapCenter.lng && mapCenter.lat) {
             console.log("third party:\t百度");
             mapInfo.coordType = gcoord.BD09;
-            mapInfo.lng = bmapCenter.lng;
-            mapInfo.lat = bmapCenter.lat;
+            mapInfo.lng = mapCenter.lng;
+            mapInfo.lat = mapCenter.lat;
             return mapInfo;
+        }
+
+        // flightradar24
+        mapCenter = await callInjectedFunction(tab, injectedFunctionGetThirdPartyFlightradar24Center);
+        if (mapCenter && mapCenter.lng && mapCenter.lat && mapCenter.coordType) {
+            console.log("third party:\tflightradar24");
+            // mapInfo.coordType = gcoord.GCJ02;
+            // mapInfo.lng = mapCenter.lng;
+            // mapInfo.lat = mapCenter.lat;
+            // return mapInfo;
+            return mapCenter;
         }
 
         console.log("third party:\tnull");
@@ -613,6 +624,58 @@ function injectedFunctionGetThirdPartyBmapCenter() {
     }
 
     return null;
+}
+
+/**
+ * 注入 flightradar24，获取经纬度
+ * @returns {*|{lat}|{lng}} gcj02
+ */
+function injectedFunctionGetThirdPartyFlightradar24Center() {
+
+    // playback
+    // for example: https://www.flightradar24.com/data/aircraft/b-2404#394bbe73
+    if (window.nite?.map?.center?.lng && window.nite.map.center.lat) {
+        let mapType = window.localStorage.getItem("map.type")
+        if (mapType) {
+            mapType = JSON.parse(mapType).toString();
+        }
+        return {
+            lng: window.nite.map.center.lng(), lat: window.nite.map.center.lat(), coordType: getCoordType(mapType)
+        }
+    }
+
+    // homepage
+    let lng = window.localStorage.getItem("map.longitude");
+    let lat = window.localStorage.getItem("map.latitude");
+    if (lng && lat) {
+        let mapType = null;
+        let settings = window.localStorage.getItem("settings");
+        if (settings) {
+            let settingsObj = JSON.parse(settings);
+            if (settingsObj?.map?.style) {
+                mapType = settingsObj.map.style;
+            }
+        }
+        return {lng: lng, lat: lat, coordType: getCoordType(mapType)};
+    }
+
+    return null;
+
+    // "terrain"
+    // "roadmap"
+    // "simple_style"
+    // "radar_style"
+    // "radar_style2"
+    // "aubergine_style"
+    // "satellite"
+    // "hybrid"
+    // "black_white"
+    function getCoordType(mapType) {
+        if (mapType === "satellite" || mapType === "hybrid") {
+            return "WGS84"
+        }
+        return "GCJ02";
+    }
 }
 
 /**
