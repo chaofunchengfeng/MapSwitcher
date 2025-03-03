@@ -42,6 +42,12 @@ It will keep the center point of the map as consistent as possible.
 
 ## 更新日志
 
+### v1.9
+
+*20250303*
+
+1. 支持 fr24 www.flightradar24.com
+
 ### v1.8
 
 *20250112*
