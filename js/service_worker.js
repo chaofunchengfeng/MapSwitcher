@@ -107,7 +107,11 @@ async function doAction(command, tab) {
             url = getUrl2GoogleMap(mapInfo);
             break;
         }
-        case "command6ToOverpassTurbo": {
+        case "command6ToTencentMap": {
+            url = getUrl2TencentMap(mapInfo);
+            break;
+        }
+        case "command7ToOverpassTurbo": {
             url = getUrl2OverpassTurbo(mapInfo);
             break;
         }
@@ -230,7 +234,7 @@ async function getCurrentMapInfo(tab) {
     let mapInfo = {};
     let urlPathname = urlObj.pathname;
     let urlHost = urlObj.host;
-    if (urlHost.endsWith("amap.com")) {
+    if (urlHost.endsWith("amap.com") || urlHost.endsWith("gaode.com")) {
         // 高德地图
 
         // poiid获取
@@ -359,6 +363,23 @@ async function getCurrentMapInfo(tab) {
         mapInfo.lng = lngLatArr[0];
         mapInfo.lat = lngLatArr[1];
         return mapInfo;
+    } else if ("qq-map.netlify.app" === urlHost) {
+        // 腾讯地图街景
+        if (!urlObj.hash) {
+            return null;
+        }
+        let hashArr = urlObj.hash.replaceAll("#", "").split("&");
+        let centerStr = hashArr.filter((item) => {
+            return item.startsWith("center=")
+        });
+        if (!centerStr || !centerStr.length) {
+            return null;
+        }
+        let lngLatArr = centerStr[0].substring(7).split("%2C");
+        mapInfo.coordType = gcoord.GCJ02;
+        mapInfo.lng = lngLatArr[1];
+        mapInfo.lat = lngLatArr[0];
+        return mapInfo;
     } else if (urlHost.indexOf("google.com") > -1) {
         // Google地图 && Google地球
         let isGoogleEarth = ("earth.google.com" === urlHost);
@@ -438,7 +459,7 @@ async function getCurrentMapInfo(tab) {
 
     }
 
-    //
+//
     return null;
 }
 
@@ -789,6 +810,19 @@ function getUrl2OverpassTurbo(mapInfo) {
         return "https://overpass-turbo.eu/";
     }
     return "https://overpass-turbo.eu/?lat=" + mapInfo.wgs84Lat + "&lon=" + mapInfo.wgs84Lng + "&zoom=18";
+}
+
+/**
+ * 腾讯地图街景
+ * @param mapInfo
+ * @returns {string} url
+ */
+function getUrl2TencentMap(mapInfo) {
+    if (!mapInfo.status) {
+        return "https://qq-map.netlify.app/#base=roadmap&cov=qqcached&zoom=16&center=39.908411%2C116.397593";
+    }
+
+    return "https://qq-map.netlify.app/#base=roadmap&cov=qqcached&zoom=16&center=" + mapInfo.gcj02Lat + "%2C" + mapInfo.gcj02Lng;
 }
 
 /**

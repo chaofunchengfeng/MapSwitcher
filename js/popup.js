@@ -13,8 +13,11 @@ document.getElementById('command4ToGoogleEarth').onclick = function () {
 document.getElementById('command5ToGoogleMap').onclick = function () {
     void handleClick("command5ToGoogleMap");
 }
-document.getElementById('command6ToOverpassTurbo').onclick = function () {
-    void handleClick("command6ToOverpassTurbo");
+document.getElementById('command6ToTencentMap').onclick = function () {
+    void handleClick("command6ToTencentMap");
+}
+document.getElementById('command7ToOverpassTurbo').onclick = function () {
+    void handleClick("command7ToOverpassTurbo");
 }
 
 /**

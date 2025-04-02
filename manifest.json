@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "__MSG_extensionName__",
   "description": "__MSG_extensionDescription__",
-  "version": "1.9",
+  "version": "2.0",
   "default_locale": "zh_CN",
   "icons": {
     "16": "images/icon-16.png",
@@ -51,11 +51,7 @@
     "storage"
   ],
   "host_permissions": [
-    "https://*.amap.com/*",
-    "https://*.baidu.com/*",
-    "https://*.google.com/maps",
-    "https://*.google.com.hk/maps",
-    "https://*.google.com.tw/maps"
+    "<all_urls>"
   ],
   "commands": {
     "command1ToAmap": {
@@ -89,8 +85,11 @@
     "command5ToGoogleMap": {
       "description": "切换至 Google地图"
     },
-    "command6ToOverpassTurbo": {
-      "description": "切换至 overpass turbo"
+    "command6ToTencentMap": {
+      "description": "切换至 腾讯地图街景"
+    },
+    "command7ToOverpassTurbo": {
+      "description": "切换至 Overpass turbo"
     }
   },
   "minimum_chrome_version": "91",

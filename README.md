@@ -6,7 +6,9 @@
 - 百度地图
 - Google地图
 - Google地球
+- 腾讯地图街景
 - Overpass turbo
+- Flightradar24
 - 三方引入高德、百度
 
 它会尽可能保持地图的中心点一致。
@@ -17,7 +19,9 @@ A Chrome extension(mv3) to switch between different map sites, currently support
 - Baidu Map
 - Google Map
 - Google Earth
+- Tencent Map
 - Overpass turbo
+- Flightradar24
 - Third party import from AMap or Baidu Map
 
 It will keep the center point of the map as consistent as possible.
@@ -41,6 +45,12 @@ It will keep the center point of the map as consistent as possible.
 [https://microsoftedge.microsoft.com/addons/detail/dopggeomeenciodjfgfmkekphcejahec](https://microsoftedge.microsoft.com/addons/detail/dopggeomeenciodjfgfmkekphcejahec)
 
 ## 更新日志
+
+### v2.0
+
+*20250402*
+
+1. 支持 腾讯地图街景
 
 ### v1.9
 
@@ -80,7 +90,7 @@ It will keep the center point of the map as consistent as possible.
 
 *20240422*
 
-1. 支持Overpass Turbo
+1. 支持Overpass turbo
 
 ### v1.3
 
